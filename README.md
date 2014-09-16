@@ -1,0 +1,1 @@
+My motd puppet module
