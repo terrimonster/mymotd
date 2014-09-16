@@ -5,4 +5,5 @@ class mymotd {
     group   => 'root',
     mode    => '0644',
     content => template('mymotd/motd.erb'),
+  }
 }
