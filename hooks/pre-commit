@@ -1,0 +1,33 @@
+#! /bin/sh
+
+# If we don't have a HEAD, then this is the first commit and we can't do any of this
+git show > /dev/null 2>&1
+if [ $? -ne 0 ]; then exit 0; fi
+
+EXITCODE=0
+for file in `git diff-index --cached --diff-filter=AM --name-only HEAD`
+do
+  echo "Validating ${file}..."
+
+  case "${file##*.}" in
+    "pp")  puppet parser validate ${file}
+     puppet-lint ${file}
+           ;;
+
+    "erb") /opt/puppet/bin/erb -P -x -T '-' ${file} | /opt/puppet/bin/ruby -c >/dev/null
+           ;;
+
+  esac
+
+  EXITCODE=$((EXITCODE + $?))
+done
+
+if [ $EXITCODE -ne 0 ]
+then
+  echo
+  echo "################################################################"
+  echo "### \033[31mPlease fix the errors above before committing your code.\033[0m ###"
+  echo "################################################################"
+fi
+
+exit $EXITCODE
