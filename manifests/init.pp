@@ -1,5 +1,6 @@
 # === class mymotd
 # manages motd
+# this is a comment
 class mymotd {
   file { '/etc/motd':
     ensure  => file
